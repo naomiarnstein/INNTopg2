@@ -1,0 +1,36 @@
+// Prisma klientgenerator
+generator client {
+    provider = "prisma-client-js"
+}
+
+// Databasekonfiguration
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
+}
+
+// Model for romaner
+model Novel {
+    id        String    @id
+    title     String
+    category  String
+    code      Int
+    imageUrl  String?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    chapters  Chapter[]
+}
+
+// Model for kapitler
+model Chapter {
+    id            String   @id
+    chapterNumber Int
+    content       String   @db.Text
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    novelId       String
+    novel         Novel    @relation(fields: [novelId], references: [id])
+
+    @@unique([novelId, chapterNumber])
+}
